@@ -1,21 +1,18 @@
 from django.urls import include, path
-from rest_framework import routers
-from django.views.generic import TemplateView
+from rest_framework.routers import SimpleRouter
 
-from .views import (
-                    PostViewSet, UserViewSet)
+from api.views import CommentViewSet, FollowViewSet, GroupViewSet, PostViewSet
 
-router_v1 = routers.DefaultRouter()
-router_v1.register(r'posts', PostViewSet)
-router_v1.register(r'users', UserViewSet)
+router_ver1 = SimpleRouter()
+router_ver1.register(r'posts/(?P<post_id>\d+)/comments',
+                     CommentViewSet,
+                     'comment')
+router_ver1.register('follow', FollowViewSet, 'follow')
+router_ver1.register('groups', GroupViewSet, 'groups')
+router_ver1.register('posts', PostViewSet, 'posts')
 
 
 urlpatterns = [
-    path('api/v1/', include(router_v1.urls)),
-    path('api/v1/', include('djoser.urls.jwt')),
-    path(
-        'redoc/',
-        TemplateView.as_view(template_name='redoc.html'),
-        name='redoc'
-    ),
+    path('v1/', include('djoser.urls.jwt')),
+    path('v1/', include(router_ver1.urls)),
 ]
